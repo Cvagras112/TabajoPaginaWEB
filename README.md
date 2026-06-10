@@ -93,9 +93,10 @@ Login implementado con JWT almacenado en cookie httpOnly.
 
 Credenciales de prueba:
 
-| Email                 |Password  | Rol   |
-| --------------------- | -------- | ----- |
-| admin@ferreteria.com  | admin123 | admin |
+| Email                    | Password    | Rol     |
+| ------------------------ | ----------- | ------- |
+| admin@ferreteria.com     | admin123    | admin   |
+| cliente@ferreteria.com   | cliente123  | cliente |
 
 ---
 
@@ -244,7 +245,6 @@ Abrir http://localhost:3000/auth/login
 │   │   ├── nueva.ejs
 │   │   └── detalle.ejs
 │   └── partials/header.ejs
-├── .env
 ├── .env.example
 ├── .gitignore
 ├── .sequelizerc

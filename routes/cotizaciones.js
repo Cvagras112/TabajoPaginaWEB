@@ -89,7 +89,7 @@ router.get('/:id', async (req, res) => {
         { model: db.DetalleCotizacion, as: 'detalles', include: [{ model: db.Producto, as: 'producto' }] }
       ]
     }),
-    db.Producto.findAll({ where: { activo: true }, order: [['nombre', 'ASC']] })
+    db.Producto.findAll({ order: [['nombre', 'ASC']] })
   ]);
 
   if (!cotizacion) {
@@ -106,7 +106,7 @@ router.post('/:id/agregar', async (req, res) => {
     db.Cotizacion.findByPk(req.params.id, {
       include: [{ model: db.DetalleCotizacion, as: 'detalles', include: [{ model: db.Producto, as: 'producto' }] }]
     }),
-    db.Producto.findAll({ where: { activo: true }, order: [['nombre', 'ASC']] }),
+    db.Producto.findAll({ order: [['nombre', 'ASC']] }),
     db.Producto.findByPk(producto_id)
   ]);
 

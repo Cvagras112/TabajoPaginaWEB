@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cotizacion #<%= cotizacion.id %> - Ferreteria de las ferreterias</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+
+  <main class="container" style="max-width:700px">
+    <a href="/cotizaciones" style="color:#1a56db;text-decoration:none;font-size:0.9em">&larr; Volver</a>
+
+    <div style="display:flex;justify-content:space-between;align-items:start;margin-top:8px;margin-bottom:24px">
+      <div>
+        <h1 style="margin:0">Cotizacion #<%= cotizacion.id %></h1>
+        <p style="color:#999;margin-top:4px"><%= cotizacion.fecha %></p>
+      </div>
+      <span class="badge badge-<%= cotizacion.estado %>" style="font-size:1em"><%= cotizacion.estado %></span>
+    </div>
+
+    <div class="card" style="margin-bottom:24px">
+      <p><strong>Cliente:</strong> <%= cotizacion.cliente_nombre %></p>
+      <p><strong>Creado por:</strong> <%= cotizacion.usuario.nombre %></p>
+      <p><strong>Total:</strong> <span style="font-size:1.3em;font-weight:bold;color:#1e3a5f">$<%= parseFloat(cotizacion.total).toFixed(2) %></span></p>
+
+      <% if (cotizacion.estado === 'pendiente') { %>
+        <form action="/cotizaciones/<%= cotizacion.id %>/estado" method="POST" style="margin-top:16px;display:flex;gap:10px">
+          <button type="submit" name="estado" value="aprobada" class="btn btn-primary" style="width:auto;background:#22c55e">Aprobar</button>
+          <button type="submit" name="estado" value="rechazada" class="btn btn-primary" style="width:auto;background:#ef4444">Rechazar</button>
+        </form>
+      <% } %>
+    </div>
+
+    <h2 style="margin-bottom:16px">Productos</h2>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="alert alert-error"><%= error %></div>
+    <% } %>
+
+    <% if (cotizacion.detalles && cotizacion.detalles.length > 0) { %>
+      <div class="card" style="padding:0;overflow:hidden">
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr style="background:#f8f9fa;text-align:left">
+              <th style="padding:12px 16px;font-size:0.85em">Producto</th>
+              <th style="padding:12px 16px;font-size:0.85em">Precio</th>
+              <th style="padding:12px 16px;font-size:0.85em">Cant.</th>
+              <th style="padding:12px 16px;font-size:0.85em">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% cotizacion.detalles.forEach(d => { %>
+              <tr style="border-top:1px solid #edf2f7">
+                <td style="padding:12px 16px"><%= d.producto.nombre %></td>
+                <td style="padding:12px 16px">$<%= parseFloat(d.precio_unitario).toFixed(2) %></td>
+                <td style="padding:12px 16px"><%= d.cantidad %></td>
+                <td style="padding:12px 16px;font-weight:600">$<%= parseFloat(d.subtotal).toFixed(2) %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+          <tfoot>
+            <tr style="border-top:2px solid #dfe6e9;background:#f8f9fa">
+              <td colspan="3" style="padding:12px 16px;text-align:right;font-weight:bold">Total</td>
+              <td style="padding:12px 16px;font-weight:bold;color:#1e3a5f;font-size:1.1em">$<%= parseFloat(cotizacion.total).toFixed(2) %></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    <% } else { %>
+      <div class="card" style="text-align:center;padding:30px">
+        <p style="color:#999">Sin productos en esta cotizacion</p>
+      </div>
+    <% } %>
+
+    <% if (cotizacion.estado === 'pendiente') { %>
+      <div class="card" style="margin-top:24px">
+        <h3 style="margin-bottom:16px">Agregar producto</h3>
+        <form action="/cotizaciones/<%= cotizacion.id %>/agregar" method="POST">
+          <div class="form-group">
+            <label for="producto_id">Producto</label>
+            <select name="producto_id" required style="width:100%;padding:12px;border:2px solid #dfe6e9;border-radius:8px;font-size:0.95em">
+              <option value="">Selecciona un producto</option>
+              <% productos.forEach(p => { %>
+                <option value="<%= p.id %>"><%= p.nombre %> - $<%= parseFloat(p.precio).toFixed(2) %> (stock: <%= p.stock %>)</option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="cantidad">Cantidad</label>
+            <input type="number" name="cantidad" min="1" value="1" required>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:auto">Agregar</button>
+        </form>
+      </div>
+    <% } %>
+  </main>
+</body>
+</html>

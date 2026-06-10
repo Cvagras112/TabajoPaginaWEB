@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cotizaciones - Ferreteria de las ferreterias</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+
+  <main class="container">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+      <h1 style="margin:0">Cotizaciones</h1>
+      <a href="/cotizaciones/nueva" class="btn btn-primary" style="width:auto">+ Nueva</a>
+    </div>
+
+    <% if (cotizaciones.length === 0) { %>
+      <div class="card" style="text-align:center;padding:40px">
+        <p style="font-size:3rem">📋</p>
+        <p style="color:#999;margin-top:12px">No hay cotizaciones todavia</p>
+        <a href="/cotizaciones/nueva" class="btn btn-primary" style="width:auto;margin-top:16px;display:inline-block">Crear primera cotizacion</a>
+      </div>
+    <% } else { %>
+      <div class="cards" style="grid-template-columns:1fr">
+        <% cotizaciones.forEach(c => { %>
+          <a href="/cotizaciones/<%= c.id %>" class="card cotizacion-card" style="text-decoration:none;color:inherit;display:block;cursor:pointer">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <strong style="font-size:1.1em"><%= c.cliente_nombre %></strong>
+                <span style="margin-left:12px;color:#999;font-size:0.85em"><%= c.fecha %></span>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px">
+                <span class="badge badge-<%= c.estado %>"><%= c.estado %></span>
+                <strong style="color:#1e3a5f">$<%= parseFloat(c.total).toFixed(2) %></strong>
+              </div>
+            </div>
+          </a>
+        <% }) %>
+      </div>
+    <% } %>
+  </main>
+</body>
+</html>

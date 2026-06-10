@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar Sesion - Ferreteria de las ferreterias</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-box">
+      <h1><span class="icono">🔩</span>Ferreteria de las ferreterias</h1>
+      <h2>Iniciar Sesion</h2>
+
+      <% if (error) { %>
+        <div class="alert alert-error"><%= error %></div>
+      <% } %>
+
+      <form action="/auth/login" method="POST">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="admin@ferreteria.com" required autofocus>
+        </div>
+        <div class="form-group">
+          <label for="password">Contrasena</label>
+          <input type="password" id="password" name="password" placeholder="Ingresa tu contrasena" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Ingresar</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

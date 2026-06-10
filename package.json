@@ -1,0 +1,30 @@
+{
+  "name": "ferreteria",
+  "version": "1.0.0",
+  "description": "Sistema de gestion para ferreteria",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "db:migrate": "sequelize db:migrate",
+    "db:migrate:undo": "sequelize db:migrate:undo",
+    "db:seed": "sequelize db:seed:all",
+    "db:seed:undo": "sequelize db:seed:undo:all",
+    "db:reset": "sequelize db:migrate:undo:all && sequelize db:migrate && sequelize db:seed:all"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.4.0",
+    "ejs": "^6.0.1",
+    "express": "^4.22.2",
+    "jsonwebtoken": "^9.0.3",
+    "mysql2": "^3.9.0",
+    "sequelize": "^6.37.0"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.6.0"
+  }
+}

@@ -18,17 +18,23 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/nueva', async (req, res) => {
-  const productos = await db.Producto.findAll({ order: [['nombre', 'ASC']] });
-  res.render('cotizaciones/nueva', { usuario: req.usuario, productos, error: null });
+  const [productos, categorias] = await Promise.all([
+    db.Producto.findAll({ order: [['nombre', 'ASC']] }),
+    db.Categoria.findAll({ order: [['nombre', 'ASC']] })
+  ]);
+  res.render('cotizaciones/nueva', { usuario: req.usuario, productos, categorias, error: null });
 });
 
 router.post('/', async (req, res) => {
   const { cliente_nombre, producto_id, cantidad } = req.body;
-  const productos = await db.Producto.findAll({ order: [['nombre', 'ASC']] });
+  const [productos, categorias] = await Promise.all([
+    db.Producto.findAll({ order: [['nombre', 'ASC']] }),
+    db.Categoria.findAll({ order: [['nombre', 'ASC']] })
+  ]);
 
   if (!cliente_nombre || !producto_id || !cantidad || cantidad < 1) {
     return res.render('cotizaciones/nueva', {
-      usuario: req.usuario, productos,
+      usuario: req.usuario, productos, categorias,
       error: 'Todos los campos son obligatorios'
     });
   }
@@ -37,14 +43,14 @@ router.post('/', async (req, res) => {
 
   if (!producto) {
     return res.render('cotizaciones/nueva', {
-      usuario: req.usuario, productos,
+      usuario: req.usuario, productos, categorias,
       error: 'Producto no encontrado'
     });
   }
 
   if (producto.stock < parseInt(cantidad)) {
     return res.status(409).render('cotizaciones/nueva', {
-      usuario: req.usuario, productos,
+      usuario: req.usuario, productos, categorias,
       error: `Stock insuficiente. "${producto.nombre}" tiene ${producto.stock} unidades disponibles, solicitaste ${cantidad}.`
     });
   }
@@ -75,38 +81,40 @@ router.post('/', async (req, res) => {
   } catch (err) {
     await t.rollback();
     res.render('cotizaciones/nueva', {
-      usuario: req.usuario, productos,
+      usuario: req.usuario, productos, categorias,
       error: 'Error al crear la cotizacion'
     });
   }
 });
 
 router.get('/:id', async (req, res) => {
-  const [cotizacion, productos] = await Promise.all([
+  const [cotizacion, productos, categorias] = await Promise.all([
     db.Cotizacion.findByPk(req.params.id, {
       include: [
         'usuario',
         { model: db.DetalleCotizacion, as: 'detalles', include: [{ model: db.Producto, as: 'producto' }] }
       ]
     }),
-    db.Producto.findAll({ order: [['nombre', 'ASC']] })
+    db.Producto.findAll({ order: [['nombre', 'ASC']] }),
+    db.Categoria.findAll({ order: [['nombre', 'ASC']] })
   ]);
 
   if (!cotizacion) {
     return res.status(404).render('error', { usuario: req.usuario, mensaje: 'Cotizacion no encontrada' });
   }
 
-  res.render('cotizaciones/detalle', { usuario: req.usuario, cotizacion, productos, error: null });
+  res.render('cotizaciones/detalle', { usuario: req.usuario, cotizacion, productos, categorias, error: null });
 });
 
 router.post('/:id/agregar', async (req, res) => {
   const { producto_id, cantidad } = req.body;
 
-  const [cotizacion, productos, producto] = await Promise.all([
+  const [cotizacion, productos, categorias, producto] = await Promise.all([
     db.Cotizacion.findByPk(req.params.id, {
       include: [{ model: db.DetalleCotizacion, as: 'detalles', include: [{ model: db.Producto, as: 'producto' }] }]
     }),
     db.Producto.findAll({ order: [['nombre', 'ASC']] }),
+    db.Categoria.findAll({ order: [['nombre', 'ASC']] }),
     db.Producto.findByPk(producto_id)
   ]);
 
@@ -116,14 +124,14 @@ router.post('/:id/agregar', async (req, res) => {
 
   if (!producto) {
     return res.render('cotizaciones/detalle', {
-      usuario: req.usuario, cotizacion, productos,
+      usuario: req.usuario, cotizacion, productos, categorias,
       error: 'Producto no encontrado'
     });
   }
 
   if (producto.stock < parseInt(cantidad)) {
     return res.status(409).render('cotizaciones/detalle', {
-      usuario: req.usuario, cotizacion, productos,
+      usuario: req.usuario, cotizacion, productos, categorias,
       error: `Stock insuficiente. "${producto.nombre}" tiene ${producto.stock} unidades, solicitaste ${cantidad}.`
     });
   }
@@ -151,7 +159,7 @@ router.post('/:id/agregar', async (req, res) => {
   } catch (err) {
     await t.rollback();
     res.render('cotizaciones/detalle', {
-      usuario: req.usuario, cotizacion, productos,
+      usuario: req.usuario, cotizacion, productos, categorias,
       error: 'Error al agregar producto'
     });
   }

@@ -79,11 +79,20 @@
         <h3 style="margin-bottom:16px">Agregar producto</h3>
         <form action="/cotizaciones/<%= cotizacion.id %>/agregar" method="POST">
           <div class="form-group">
-            <label for="producto_id">Producto</label>
-            <select name="producto_id" required style="width:100%;padding:12px;border:2px solid #dfe6e9;border-radius:8px;font-size:0.95em">
+            <label for="filtro_categoria_detalle">Filtrar por categoria</label>
+            <select id="filtro_categoria_detalle" style="width:100%;padding:12px;border:2px solid #dfe6e9;border-radius:8px;font-size:0.95em" onchange="filtrarProductosDetalle()">
+              <option value="">Todas las categorias</option>
+              <% categorias.forEach(c => { %>
+                <option value="<%= c.id %>"><%= c.nombre %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="producto_id_detalle">Producto</label>
+            <select name="producto_id" id="producto_id_detalle" required style="width:100%;padding:12px;border:2px solid #dfe6e9;border-radius:8px;font-size:0.95em">
               <option value="">Selecciona un producto</option>
               <% productos.forEach(p => { %>
-                <option value="<%= p.id %>"><%= p.nombre %> - $<%= parseFloat(p.precio).toFixed(2) %> (stock: <%= p.stock %>)</option>
+                <option value="<%= p.id %>" data-categoria="<%= p.categoria_id || '' %>"><%= p.nombre %> - $<%= parseFloat(p.precio).toFixed(2) %> (stock: <%= p.stock %>)</option>
               <% }) %>
             </select>
           </div>
@@ -96,5 +105,20 @@
       </div>
     <% } %>
   </main>
+
+  <script>
+    function filtrarProductosDetalle() {
+      var catId = document.getElementById('filtro_categoria_detalle').value;
+      var select = document.getElementById('producto_id_detalle');
+      var options = select.options;
+      for (var i = 0; i < options.length; i++) {
+        var opt = options[i];
+        if (!opt.value) { opt.style.display = ''; continue; }
+        var cat = opt.getAttribute('data-categoria');
+        opt.style.display = (!catId || cat === catId) ? '' : 'none';
+      }
+      select.value = '';
+    }
+  </script>
 </body>
 </html>

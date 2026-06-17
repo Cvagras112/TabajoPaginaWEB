@@ -32,6 +32,15 @@
         </form>
       <% } else if (!esAdmin && cotizacion.estado === 'pendiente') { %>
         <div class="alert alert-info" style="margin-top:16px">⏳ Su solicitud sera revisada en breve por el administrador.</div>
+      <% } else if (cotizacion.estado === 'aprobada') { %>
+        <div class="alert alert-success" style="margin-top:16px">✅ Cotizacion aprobada por el administrador.</div>
+        <form action="/cotizaciones/<%= cotizacion.id %>/aceptar" method="POST" style="margin-top:12px">
+          <button type="submit" class="btn btn-primary" style="width:auto;background:#22c55e">✔ Aceptar cotizacion</button>
+        </form>
+      <% } else if (cotizacion.estado === 'rechazada') { %>
+        <div class="alert alert-error" style="margin-top:16px">❌ Esta cotizacion fue rechazada.</div>
+      <% } else if (cotizacion.estado === 'aceptada') { %>
+        <div class="alert alert-success" style="margin-top:16px">🎉 Cotizacion aceptada. Stock descontado.</div>
       <% } %>
     </div>
 

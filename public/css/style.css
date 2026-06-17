@@ -334,6 +334,11 @@ main h1 {
   color: #991b1b;
 }
 
+.badge-aceptada {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
 /* Cotizacion card */
 .cotizacion-card:hover {
   border-color: #1a56db !important;

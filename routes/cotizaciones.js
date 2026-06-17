@@ -181,46 +181,59 @@ router.post('/:id/estado', async (req, res) => {
     return res.status(404).render('error', { usuario: req.usuario, mensaje: 'Cotizacion no encontrada' });
   }
 
-  if (!['pendiente', 'aprobada', 'rechazada'].includes(estado)) {
+  if (!['aprobada', 'rechazada'].includes(estado)) {
     return res.status(422).render('error', { usuario: req.usuario, mensaje: 'Estado no valido' });
   }
 
-  // rq-05: Si se aprueba, descontar stock
-  if (estado === 'aprobada' && cotizacion.estado !== 'aprobada') {
-    const detalles = await db.DetalleCotizacion.findAll({
-      where: { cotizacion_id: cotizacion.id },
-      include: ['producto']
-    });
-
-    const t = await db.sequelize.transaction();
-
-    try {
-      for (const detalle of detalles) {
-        const producto = detalle.producto;
-        const nuevoStock = producto.stock - detalle.cantidad;
-
-        if (nuevoStock < 0) {
-          await t.rollback();
-          return res.status(409).render('error', {
-            usuario: req.usuario,
-            mensaje: `No se puede aprobar. Stock insuficiente de "${producto.nombre}" (disponible: ${producto.stock})`
-          });
-        }
-
-        await producto.update({ stock: nuevoStock }, { transaction: t });
-      }
-
-      await cotizacion.update({ estado }, { transaction: t });
-      await t.commit();
-    } catch (err) {
-      await t.rollback();
-      return res.status(500).render('error', { usuario: req.usuario, mensaje: 'Error al aprobar cotizacion' });
-    }
-  } else {
-    await cotizacion.update({ estado });
+  if (cotizacion.estado !== 'pendiente') {
+    return res.status(422).render('error', { usuario: req.usuario, mensaje: 'Solo se puede aprobar o rechazar cotizaciones pendientes' });
   }
 
+  await cotizacion.update({ estado });
   res.redirect(`/cotizaciones/${cotizacion.id}`);
+});
+
+router.post('/:id/aceptar', async (req, res) => {
+  const cotizacion = await db.Cotizacion.findByPk(req.params.id);
+
+  if (!cotizacion) {
+    return res.status(404).render('error', { usuario: req.usuario, mensaje: 'Cotizacion no encontrada' });
+  }
+
+  if (cotizacion.estado !== 'aprobada') {
+    return res.status(422).render('error', { usuario: req.usuario, mensaje: 'Solo se pueden aceptar cotizaciones aprobadas' });
+  }
+
+  const detalles = await db.DetalleCotizacion.findAll({
+    where: { cotizacion_id: cotizacion.id },
+    include: ['producto']
+  });
+
+  const t = await db.sequelize.transaction();
+
+  try {
+    for (const detalle of detalles) {
+      const producto = detalle.producto;
+      const nuevoStock = producto.stock - detalle.cantidad;
+
+      if (nuevoStock < 0) {
+        await t.rollback();
+        return res.status(409).render('error', {
+          usuario: req.usuario,
+          mensaje: `No se puede aceptar. Stock insuficiente de "${producto.nombre}" (disponible: ${producto.stock})`
+        });
+      }
+
+      await producto.update({ stock: nuevoStock }, { transaction: t });
+    }
+
+    await cotizacion.update({ estado: 'aceptada' }, { transaction: t });
+    await t.commit();
+    res.redirect(`/cotizaciones/${cotizacion.id}`);
+  } catch (err) {
+    await t.rollback();
+    return res.status(500).render('error', { usuario: req.usuario, mensaje: 'Error al aceptar cotizacion' });
+  }
 });
 
 module.exports = router;

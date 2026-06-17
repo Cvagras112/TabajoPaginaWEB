@@ -10,11 +10,37 @@ function esAdmin(req) {
 }
 
 router.get('/', async (req, res) => {
-  const productos = await db.Producto.findAll({
-    include: [{ model: db.Categoria, as: 'categoria' }],
-    order: [['nombre', 'ASC']]
+  const { buscar, categoria_id, stock_bajo } = req.query;
+  const where = {};
+
+  if (buscar) {
+    where.nombre = { [db.Sequelize.Op.like]: `%${buscar}%` };
+  }
+
+  if (categoria_id) {
+    where.categoria_id = parseInt(categoria_id);
+  }
+
+  if (stock_bajo === '1') {
+    where.stock = { [db.Sequelize.Op.lte]: 10 };
+  }
+
+  const [productos, categorias] = await Promise.all([
+    db.Producto.findAll({
+      where,
+      include: [{ model: db.Categoria, as: 'categoria' }],
+      order: [['nombre', 'ASC']]
+    }),
+    db.Categoria.findAll({ order: [['nombre', 'ASC']] })
+  ]);
+
+  res.render('productos/index', {
+    usuario: req.usuario,
+    productos,
+    categorias,
+    esAdmin: esAdmin(req),
+    filtros: { buscar: buscar || '', categoria_id: categoria_id || '', stock_bajo: stock_bajo || '' }
   });
-  res.render('productos/index', { usuario: req.usuario, productos, esAdmin: esAdmin(req) });
 });
 
 router.get('/nuevo', async (req, res) => {

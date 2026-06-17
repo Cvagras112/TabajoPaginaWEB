@@ -10,17 +10,47 @@
   <%- include('../partials/header') %>
 
   <main class="container">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
       <h1 style="margin:0">Productos</h1>
       <% if (esAdmin) { %>
         <a href="/productos/nuevo" class="btn btn-primary" style="width:auto">+ Nuevo</a>
       <% } %>
     </div>
 
+    <div class="card" style="margin-bottom:20px;padding:16px 20px">
+      <form action="/productos" method="GET" style="display:flex;gap:10px;flex-wrap:wrap;align-items:end">
+        <div style="flex:1;min-width:180px">
+          <label style="display:block;font-size:0.8em;font-weight:600;margin-bottom:4px;color:#636e72">Buscar</label>
+          <input type="text" name="buscar" value="<%= filtros.buscar %>" placeholder="Nombre del producto..." style="width:100%;padding:8px 12px;border:2px solid #dfe6e9;border-radius:6px;font-size:0.9em">
+        </div>
+        <div style="min-width:160px">
+          <label style="display:block;font-size:0.8em;font-weight:600;margin-bottom:4px;color:#636e72">Categoria</label>
+          <select name="categoria_id" style="width:100%;padding:8px 12px;border:2px solid #dfe6e9;border-radius:6px;font-size:0.9em;background:white">
+            <option value="">Todas</option>
+            <% categorias.forEach(c => { %>
+              <option value="<%= c.id %>" <%= filtros.categoria_id == c.id ? 'selected' : '' %>><%= c.nombre %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div style="min-width:120px">
+          <label style="display:block;font-size:0.8em;font-weight:600;margin-bottom:4px;color:#636e72">&nbsp;</label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:8px 0;font-size:0.9em">
+            <input type="checkbox" name="stock_bajo" value="1" <%= filtros.stock_bajo === '1' ? 'checked' : '' %> onchange="this.form.submit()">
+            Stock bajo (<10)
+          </label>
+        </div>
+        <div style="display:flex;gap:6px">
+          <label style="display:block;font-size:0.8em;font-weight:600;margin-bottom:4px;color:#636e72">&nbsp;</label>
+          <button type="submit" class="btn btn-primary" style="width:auto;padding:8px 16px;font-size:0.85em">Filtrar</button>
+          <a href="/productos" class="btn btn-primary" style="width:auto;padding:8px 16px;font-size:0.85em;background:transparent;border:1px solid #ccc;color:#636e72;text-decoration:none">Limpiar</a>
+        </div>
+      </form>
+    </div>
+
     <% if (productos.length === 0) { %>
       <div class="card" style="text-align:center;padding:40px">
         <p style="font-size:3rem">📦</p>
-        <p style="color:#999">No hay productos registrados</p>
+        <p style="color:#999">No se encontraron productos</p>
       </div>
     <% } else { %>
       <div class="card" style="padding:0;overflow:hidden">

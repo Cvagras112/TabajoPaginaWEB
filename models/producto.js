@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   class Producto extends Model {
     static associate(models) {
       Producto.hasMany(models.DetalleCotizacion, { foreignKey: 'producto_id', as: 'detalles' });
+      Producto.belongsTo(models.Categoria, { foreignKey: 'categoria_id', as: 'categoria' });
     }
   }
 
@@ -14,7 +15,8 @@ module.exports = (sequelize, DataTypes) => {
     gtin: { type: DataTypes.STRING(50), allowNull: true, unique: true },
     precio: { type: DataTypes.DECIMAL(10,2), allowNull: false, defaultValue: 0.00, validate: { min: 0 } },
     stock: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0, validate: { min: 0 } },
-    disponibilidad: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true }
+    disponibilidad: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+    categoria_id: { type: DataTypes.INTEGER, allowNull: true }
   }, {
     sequelize,
     modelName: 'Producto',

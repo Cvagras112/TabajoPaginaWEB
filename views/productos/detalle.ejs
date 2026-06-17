@@ -22,6 +22,7 @@
     <div class="card">
       <table style="width:100%">
         <tr><td style="padding:8px 0;color:#999;width:120px">Tipo/Medida</td><td style="padding:8px 0"><strong><%= producto.tipo || '-' %></strong></td></tr>
+        <tr><td style="padding:8px 0;color:#999">Categoria</td><td style="padding:8px 0"><strong><%= producto.categoria ? producto.categoria.nombre : 'Sin categoria' %></strong></td></tr>
         <tr><td style="padding:8px 0;color:#999">GTIN</td><td style="padding:8px 0"><strong><%= producto.gtin || '-' %></strong></td></tr>
         <tr><td style="padding:8px 0;color:#999">Precio</td><td style="padding:8px 0"><strong style="color:#1e3a5f;font-size:1.3em">$<%= parseFloat(producto.precio).toFixed(2) %></strong></td></tr>
         <tr><td style="padding:8px 0;color:#999">Stock</td><td style="padding:8px 0"><strong><%= producto.stock %> unidades</strong></td></tr>
@@ -32,7 +33,7 @@
       <div style="margin-top:16px;display:flex;gap:10px">
         <a href="/productos/<%= producto.id %>/editar" class="btn btn-primary" style="width:auto">Editar</a>
         <form action="/productos/<%= producto.id %>/eliminar" method="POST" onsubmit="return confirm('Eliminar este producto?')">
-          <button type="submit" class="btn btn-primary" style="width:auto;background:#ef4444">Eliminar</button>
+          <button type="submit" class="btn btn-primary btn-danger" style="width:auto">Eliminar</button>
         </form>
       </div>
     <% } %>

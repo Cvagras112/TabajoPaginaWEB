@@ -24,6 +24,15 @@
           <input type="text" id="nombre" name="nombre" value="<%= producto.nombre %>" required>
         </div>
         <div class="form-group">
+          <label for="categoria_id">Categoria</label>
+          <select name="categoria_id" id="categoria_id" style="width:100%;padding:12px;border:2px solid #dfe6e9;border-radius:8px;font-size:0.95em">
+            <option value="">Sin categoria</option>
+            <% categorias.forEach(c => { %>
+              <option value="<%= c.id %>" <%= producto.categoria_id == c.id ? 'selected' : '' %>><%= c.nombre %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="form-group">
           <label for="tipo">Tipo / Medida</label>
           <input type="text" id="tipo" name="tipo" value="<%= producto.tipo || '' %>" placeholder="pulgada 1/2">
         </div>
@@ -54,7 +63,7 @@
     </div>
 
     <form action="/productos/<%= producto.id %>/eliminar" method="POST" onsubmit="return confirm('Eliminar este producto?')" style="margin-top:16px">
-      <button type="submit" class="btn btn-primary" style="width:auto;background:#ef4444">🗑 Eliminar producto</button>
+      <button type="submit" class="btn btn-primary btn-danger" style="width:auto">🗑 Eliminar producto</button>
     </form>
   </main>
 </body>

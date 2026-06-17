@@ -24,6 +24,15 @@
           <input type="text" id="nombre" name="nombre" required autofocus>
         </div>
         <div class="form-group">
+          <label for="categoria_id">Categoria</label>
+          <select name="categoria_id" id="categoria_id" style="width:100%;padding:12px;border:2px solid #dfe6e9;border-radius:8px;font-size:0.95em">
+            <option value="">Sin categoria</option>
+            <% categorias.forEach(c => { %>
+              <option value="<%= c.id %>"><%= c.nombre %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="form-group">
           <label for="tipo">Tipo / Medida (ej: pulgada 1/2, mm 10, metro)</label>
           <input type="text" id="tipo" name="tipo" placeholder="pulgada 1/2">
         </div>

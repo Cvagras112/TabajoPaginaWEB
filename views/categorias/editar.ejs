@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar Categoria - Ferreteria Kauquenes</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+
+  <main class="container" style="max-width:600px">
+    <a href="/categorias" style="color:#1a56db;text-decoration:none;font-size:0.9em">&larr; Volver</a>
+    <h1 style="margin-top:8px">Editar: <%= categoria.nombre %></h1>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="alert alert-error"><%= error %></div>
+    <% } %>
+
+    <div class="card">
+      <form action="/categorias/<%= categoria.id %>" method="POST">
+        <div class="form-group">
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" name="nombre" value="<%= categoria.nombre %>" required>
+        </div>
+        <div class="form-group">
+          <label for="descripcion">Descripcion</label>
+          <textarea id="descripcion" name="descripcion" rows="3" style="width:100%;padding:10px;border:2px solid #dfe6e9;border-radius:8px;font-size:0.95em;resize:vertical"><%= categoria.descripcion || '' %></textarea>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button type="submit" class="btn btn-primary">Guardar cambios</button>
+          <a href="/categorias" class="btn btn-primary" style="width:auto;background:transparent;border:1px solid #ccc;color:#636e72">Cancelar</a>
+        </div>
+      </form>
+    </div>
+
+    <form action="/categorias/<%= categoria.id %>/eliminar" method="POST" onsubmit="return confirm('Eliminar esta categoria?')" style="margin-top:16px">
+      <button type="submit" class="btn btn-primary btn-danger" style="width:auto">🗑 Eliminar categoria</button>
+    </form>
+  </main>
+</body>
+</html>

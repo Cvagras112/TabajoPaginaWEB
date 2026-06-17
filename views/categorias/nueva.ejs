@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nueva Categoria - Ferreteria Kauquenes</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+
+  <main class="container" style="max-width:600px">
+    <a href="/categorias" style="color:#1a56db;text-decoration:none;font-size:0.9em">&larr; Volver</a>
+    <h1 style="margin-top:8px">Nueva Categoria</h1>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="alert alert-error"><%= error %></div>
+    <% } %>
+
+    <div class="card">
+      <form action="/categorias" method="POST">
+        <div class="form-group">
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" name="nombre" required autofocus>
+        </div>
+        <div class="form-group">
+          <label for="descripcion">Descripcion</label>
+          <textarea id="descripcion" name="descripcion" rows="3" style="width:100%;padding:10px;border:2px solid #dfe6e9;border-radius:8px;font-size:0.95em;resize:vertical"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Crear categoria</button>
+      </form>
+    </div>
+  </main>
+</body>
+</html>

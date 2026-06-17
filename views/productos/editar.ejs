@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar - Ferreteria Kauquenes</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+
+  <main class="container" style="max-width:600px">
+    <a href="/productos" style="color:#1a56db;text-decoration:none;font-size:0.9em">&larr; Volver</a>
+    <h1 style="margin-top:8px">Editar: <%= producto.nombre %></h1>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="alert alert-error"><%= error %></div>
+    <% } %>
+
+    <div class="card">
+      <form action="/productos/<%= producto.id %>" method="POST">
+        <div class="form-group">
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" name="nombre" value="<%= producto.nombre %>" required>
+        </div>
+        <div class="form-group">
+          <label for="tipo">Tipo / Medida</label>
+          <input type="text" id="tipo" name="tipo" value="<%= producto.tipo || '' %>" placeholder="pulgada 1/2">
+        </div>
+        <div class="form-group">
+          <label for="gtin">GTIN / EAN</label>
+          <input type="text" id="gtin" name="gtin" value="<%= producto.gtin || '' %>">
+        </div>
+        <div class="form-group">
+          <label for="precio">Precio</label>
+          <input type="number" id="precio" name="precio" step="0.01" min="0" value="<%= producto.precio %>" required>
+        </div>
+        <div class="form-group">
+          <label for="stock">Stock</label>
+          <input type="number" id="stock" name="stock" min="0" value="<%= producto.stock %>" required>
+        </div>
+        <div class="form-group">
+          <label for="disponibilidad">Disponibilidad</label>
+          <select name="disponibilidad" id="disponibilidad" style="width:100%;padding:12px;border:2px solid #dfe6e9;border-radius:8px;font-size:0.95em">
+            <option value="1" <%= producto.disponibilidad ? 'selected' : '' %>>Disponible</option>
+            <option value="0" <%= !producto.disponibilidad ? 'selected' : '' %>>No disponible</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+      </form>
+    </div>
+  </main>
+</body>
+</html>

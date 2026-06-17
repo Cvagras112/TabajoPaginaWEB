@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= producto.nombre %> - Ferreteria Kauquenes</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+
+  <main class="container" style="max-width:600px">
+    <a href="/productos" style="color:#1a56db;text-decoration:none;font-size:0.9em">&larr; Volver</a>
+
+    <div style="display:flex;justify-content:space-between;align-items:start;margin-top:8px;margin-bottom:24px">
+      <h1 style="margin:0"><%= producto.nombre %></h1>
+      <span class="badge <%= producto.disponibilidad ? 'badge-aprobada' : 'badge-rechazada' %>" style="font-size:1em">
+        <%= producto.disponibilidad ? 'Disponible' : 'No disponible' %>
+      </span>
+    </div>
+
+    <div class="card">
+      <table style="width:100%">
+        <tr><td style="padding:8px 0;color:#999;width:120px">Tipo/Medida</td><td style="padding:8px 0"><strong><%= producto.tipo || '-' %></strong></td></tr>
+        <tr><td style="padding:8px 0;color:#999">GTIN</td><td style="padding:8px 0"><strong><%= producto.gtin || '-' %></strong></td></tr>
+        <tr><td style="padding:8px 0;color:#999">Precio</td><td style="padding:8px 0"><strong style="color:#1e3a5f;font-size:1.3em">$<%= parseFloat(producto.precio).toFixed(2) %></strong></td></tr>
+        <tr><td style="padding:8px 0;color:#999">Stock</td><td style="padding:8px 0"><strong><%= producto.stock %> unidades</strong></td></tr>
+      </table>
+    </div>
+
+    <% if (esAdmin) { %>
+      <div style="margin-top:16px;display:flex;gap:10px">
+        <a href="/productos/<%= producto.id %>/editar" class="btn btn-primary" style="width:auto">Editar</a>
+        <form action="/productos/<%= producto.id %>/eliminar" method="POST" onsubmit="return confirm('Eliminar este producto?')">
+          <button type="submit" class="btn btn-primary" style="width:auto;background:#ef4444">Eliminar</button>
+        </form>
+      </div>
+    <% } %>
+  </main>
+</body>
+</html>

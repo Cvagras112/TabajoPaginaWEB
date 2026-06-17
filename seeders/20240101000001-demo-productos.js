@@ -3,18 +3,24 @@
 module.exports = {
   up: async (queryInterface) => {
     await queryInterface.bulkInsert('Producto', [
-      { nombre: 'Martillo de acero 16 oz', descripcion: 'Martillo de acero forjado con mango de goma.', precio: 125.50, stock: 45, categoria: 'Herramientas', created_at: new Date(), updated_at: new Date() },
-      { nombre: 'Tornillo para madera 2" (50 piezas)', descripcion: 'Paquete de 50 tornillos, cabeza plana, zincado.', precio: 35.00, stock: 200, categoria: 'Tornilleria', created_at: new Date(), updated_at: new Date() },
-      { nombre: 'Pintura blanca vinilica 19 L', descripcion: 'Pintura vinilica blanca, cubrimiento 50 m².', precio: 650.00, stock: 15, categoria: 'Pinturas', created_at: new Date(), updated_at: new Date() },
-      { nombre: 'Cable electrico calibre 12 (rollo 100 m)', descripcion: 'Cable de cobre calibre 12, forro PVC.', precio: 430.00, stock: 25, categoria: 'Electricidad', created_at: new Date(), updated_at: new Date() },
-      { nombre: 'Tubo PVC sanitario 4" x 3 m', descripcion: 'Tubo PVC sanitario 4 pulgadas, para desague.', precio: 185.00, stock: 60, categoria: 'Plomeria', created_at: new Date(), updated_at: new Date() },
-      { nombre: 'Taladro inalambrico 18V', descripcion: 'Taladro inalambrico con bateria de litio y maletin.', precio: 1250.00, stock: 8, categoria: 'Herramientas', created_at: new Date(), updated_at: new Date() },
-      { nombre: 'Manguera para jardin 1/2" 15 m', descripcion: 'Manguera reforzada 15 metros con conectores.', precio: 195.00, stock: 30, categoria: 'Jardineria', created_at: new Date(), updated_at: new Date() },
-      { nombre: 'Casco de seguridad industrial', descripcion: 'Casco ajustable color amarillo, norma ANSI.', precio: 85.00, stock: 40, categoria: 'Seguridad', created_at: new Date(), updated_at: new Date() },
-      { nombre: 'Silicon sellador transparente 280 ml', descripcion: 'Silicon sellador multiusos resistente al agua.', precio: 75.00, stock: 100, categoria: 'Adhesivos', created_at: new Date(), updated_at: new Date() },
-      { nombre: 'Pinzas de presion 10"', descripcion: 'Pinzas de presion 10 pulgadas, acero templado.', precio: 210.00, stock: 22, categoria: 'Herramientas', created_at: new Date(), updated_at: new Date() }
+      { nombre: 'Martillo carpintero 16 oz', tipo: '16 oz', gtin: '7801234560001', precio: 5990, stock: 45, disponibilidad: true, created_at: new Date(), updated_at: new Date() },
+      { nombre: 'Tornillo madera 2 pulgadas (50 piezas)', tipo: 'pulgada 2', gtin: '7801234560002', precio: 1490, stock: 200, disponibilidad: true, created_at: new Date(), updated_at: new Date() },
+      { nombre: 'Pintura latex blanco 19L', tipo: '19 litros', gtin: '7801234560003', precio: 28990, stock: 15, disponibilidad: true, created_at: new Date(), updated_at: new Date() },
+      { nombre: 'Cable electrico 2.5mm rollo 100m', tipo: '2.5 mm', gtin: '7801234560004', precio: 23490, stock: 25, disponibilidad: true, created_at: new Date(), updated_at: new Date() },
+      { nombre: 'Tubo PVC sanitario 110mm x 3m', tipo: '110 mm', gtin: '7801234560005', precio: 8990, stock: 60, disponibilidad: true, created_at: new Date(), updated_at: new Date() },
+      { nombre: 'Taladro percutor 850W', tipo: '850W', gtin: '7801234560006', precio: 79990, stock: 8, disponibilidad: true, created_at: new Date(), updated_at: new Date() },
+      { nombre: 'Manguera jardin reforzada 15m', tipo: '1/2 pulgada', gtin: '7801234560007', precio: 9990, stock: 30, disponibilidad: true, created_at: new Date(), updated_at: new Date() },
+      { nombre: 'Casco seguridad amarillo', tipo: 'estandar', gtin: '7801234560008', precio: 4990, stock: 40, disponibilidad: true, created_at: new Date(), updated_at: new Date() },
+      { nombre: 'Silicona selladora transparente 280ml', tipo: '280 ml', gtin: '7801234560009', precio: 3490, stock: 100, disponibilidad: true, created_at: new Date(), updated_at: new Date() },
+      { nombre: 'Cerrojo seguridad puerta 60mm', tipo: '60 mm', gtin: '7801234560010', precio: 12990, stock: 22, disponibilidad: true, created_at: new Date(), updated_at: new Date() },
+      { nombre: 'Llave ajustable 12 pulgadas', tipo: 'pulgada 12', gtin: '7801234560011', precio: 15990, stock: 15, disponibilidad: true, created_at: new Date(), updated_at: new Date() },
+      { nombre: 'Clavo acero 4 pulgadas (1kg)', tipo: 'pulgada 4', gtin: '7801234560012', precio: 2990, stock: 80, disponibilidad: true, created_at: new Date(), updated_at: new Date() },
+      { nombre: 'Cinta metrica 5 metros', tipo: '5 metros', gtin: '7801234560013', precio: 3490, stock: 50, disponibilidad: true, created_at: new Date(), updated_at: new Date() },
+      { nombre: 'Broca concreto 10mm', tipo: '10 mm', gtin: '7801234560014', precio: 1990, stock: 35, disponibilidad: true, created_at: new Date(), updated_at: new Date() },
+      { nombre: 'Guantes trabajo cuero', tipo: 'talla L', gtin: '7801234560015', precio: 7990, stock: 25, disponibilidad: false, created_at: new Date(), updated_at: new Date() }
     ], {});
   },
+
   down: async (queryInterface) => {
     await queryInterface.bulkDelete('Producto', null, {});
   }

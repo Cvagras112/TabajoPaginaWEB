@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Productos - Ferreteria Kauquenes</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+
+  <main class="container">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+      <h1 style="margin:0">Productos</h1>
+      <% if (esAdmin) { %>
+        <a href="/productos/nuevo" class="btn btn-primary" style="width:auto">+ Nuevo</a>
+      <% } %>
+    </div>
+
+    <% if (productos.length === 0) { %>
+      <div class="card" style="text-align:center;padding:40px">
+        <p style="font-size:3rem">📦</p>
+        <p style="color:#999">No hay productos registrados</p>
+      </div>
+    <% } else { %>
+      <div class="card" style="padding:0;overflow:hidden">
+        <table>
+          <thead>
+            <tr style="background:#f8f9fa;text-align:left">
+              <th style="padding:12px 16px;font-size:0.85em">Nombre</th>
+              <th style="padding:12px 16px;font-size:0.85em">Tipo/Medida</th>
+              <th style="padding:12px 16px;font-size:0.85em">GTIN</th>
+              <th style="padding:12px 16px;font-size:0.85em">Precio</th>
+              <th style="padding:12px 16px;font-size:0.85em">Stock</th>
+              <th style="padding:12px 16px;font-size:0.85em">Disp.</th>
+              <% if (esAdmin) { %><th style="padding:12px 16px;font-size:0.85em">Accion</th><% } %>
+            </tr>
+          </thead>
+          <tbody>
+            <% productos.forEach(p => { %>
+              <tr style="border-top:1px solid #edf2f7">
+                <td style="padding:12px 16px"><a href="/productos/<%= p.id %>" style="color:#1a56db;text-decoration:none;font-weight:500"><%= p.nombre %></a></td>
+                <td style="padding:12px 16px;color:#636e72"><%= p.tipo || '-' %></td>
+                <td style="padding:12px 16px;color:#636e72;font-size:0.85em"><%= p.gtin || '-' %></td>
+                <td style="padding:12px 16px;font-weight:600">$<%= parseFloat(p.precio).toFixed(2) %></td>
+                <td style="padding:12px 16px"><%= p.stock %></td>
+                <td style="padding:12px 16px"><span class="badge <%= p.disponibilidad ? 'badge-aprobada' : 'badge-rechazada' %>"><%= p.disponibilidad ? 'Si' : 'No' %></span></td>
+                <% if (esAdmin) { %>
+                  <td style="padding:12px 16px"><a href="/productos/<%= p.id %>/editar" style="color:#1a56db;font-size:0.85em">Editar</a></td>
+                <% } %>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </main>
+</body>
+</html>

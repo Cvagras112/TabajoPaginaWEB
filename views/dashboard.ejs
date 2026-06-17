@@ -13,18 +13,18 @@
     <h1>Bienvenido, <%= usuario.nombre %></h1>
 
     <div class="cards">
-      <div class="card">
+      <a href="/productos" class="card dashboard-card">
         <div class="card-icon">📦</div>
         <h3>Productos</h3>
         <p class="card-number"><%= totalProductos %></p>
         <small>en inventario</small>
-      </div>
-      <div class="card">
+      </a>
+      <a href="/categorias" class="card dashboard-card">
         <div class="card-icon">📂</div>
         <h3>Categorias</h3>
         <p class="card-number"><%= totalCategorias %></p>
         <small>registradas</small>
-      </div>
+      </a>
     </div>
 
     <footer>Ferreteria Kauquenes &copy; <%= new Date().getFullYear() %></footer>

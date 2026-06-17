@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Categorias - Ferreteria Kauquenes</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+
+  <main class="container">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+      <h1 style="margin:0">Categorias</h1>
+    </div>
+
+    <% if (categorias.length === 0) { %>
+      <div class="card" style="text-align:center;padding:40px">
+        <p style="font-size:3rem">📂</p>
+        <p style="color:#999">No hay categorias registradas</p>
+      </div>
+    <% } else { %>
+      <div class="cards" style="grid-template-columns:1fr">
+        <% categorias.forEach(c => { %>
+          <div class="card categorias-card" style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:1.5rem">📂</span>
+            <div>
+              <strong><%= c.nombre %></strong>
+              <% if (c.descripcion) { %>
+                <p style="color:#999;font-size:0.85em;margin-top:2px"><%= c.descripcion %></p>
+              <% } %>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </main>
+</body>
+</html>

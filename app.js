@@ -19,6 +19,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/auth', authRoutes);
 app.use('/productos', require('./routes/productos'));
+app.use('/categorias', require('./routes/categorias'));
 app.use('/cotizaciones', require('./routes/cotizaciones'));
 app.use('/', require('./routes/index'));
 

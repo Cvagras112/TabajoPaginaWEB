@@ -286,6 +286,16 @@ main h1 {
   margin-top: 6px;
 }
 
+.dashboard-card {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.dashboard-card:hover {
+  color: inherit;
+}
+
 /* Badges */
 .badge {
   display: inline-block;

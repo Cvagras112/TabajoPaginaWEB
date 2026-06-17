@@ -46,9 +46,16 @@
             <option value="0" <%= !producto.disponibilidad ? 'selected' : '' %>>No disponible</option>
           </select>
         </div>
-        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        <div style="display:flex;gap:10px">
+          <button type="submit" class="btn btn-primary">Guardar cambios</button>
+          <a href="/productos" class="btn btn-primary" style="width:auto;background:transparent;border:1px solid #ccc;color:#636e72">Cancelar</a>
+        </div>
       </form>
     </div>
+
+    <form action="/productos/<%= producto.id %>/eliminar" method="POST" onsubmit="return confirm('Eliminar este producto?')" style="margin-top:16px">
+      <button type="submit" class="btn btn-primary" style="width:auto;background:#ef4444">🗑 Eliminar producto</button>
+    </form>
   </main>
 </body>
 </html>

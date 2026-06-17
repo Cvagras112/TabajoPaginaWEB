@@ -139,6 +139,16 @@ body {
   box-shadow: 0 6px 20px rgba(26, 86, 219, 0.4);
 }
 
+.btn-danger {
+  background: #ef4444 !important;
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #dc2626 !important;
+  transform: translateY(-1px);
+}
+
 .btn-outline {
   background: rgba(255, 255, 255, 0.1);
   color: white;

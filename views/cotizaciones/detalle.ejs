@@ -25,11 +25,13 @@
       <p><strong>Creado por:</strong> <%= cotizacion.usuario.nombre %></p>
       <p><strong>Total:</strong> <span style="font-size:1.3em;font-weight:bold;color:#1e3a5f">$<%= parseFloat(cotizacion.total).toFixed(2) %></span></p>
 
-      <% if (cotizacion.estado === 'pendiente') { %>
+      <% if (esAdmin && cotizacion.estado === 'pendiente') { %>
         <form action="/cotizaciones/<%= cotizacion.id %>/estado" method="POST" style="margin-top:16px;display:flex;gap:10px">
           <button type="submit" name="estado" value="aprobada" class="btn btn-primary" style="width:auto;background:#22c55e">Aprobar</button>
           <button type="submit" name="estado" value="rechazada" class="btn btn-primary" style="width:auto;background:#ef4444">Rechazar</button>
         </form>
+      <% } else if (!esAdmin && cotizacion.estado === 'pendiente') { %>
+        <div class="alert alert-info" style="margin-top:16px">⏳ Su solicitud sera revisada en breve por el administrador.</div>
       <% } %>
     </div>
 

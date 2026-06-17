@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
       include: ['usuario'],
       order: [['created_at', 'DESC']]
     });
-    res.render('cotizaciones/index', { usuario: req.usuario, cotizaciones });
+    res.render('cotizaciones/index', { usuario: req.usuario, cotizaciones, mensaje: req.query.mensaje || null });
   } catch (err) {
     res.status(500).render('error', { usuario: req.usuario, mensaje: 'Error al cargar cotizaciones' });
   }
@@ -77,7 +77,11 @@ router.post('/', async (req, res) => {
     }, { transaction: t });
 
     await t.commit();
-    res.redirect('/cotizaciones');
+    if (req.usuario.rol === 'admin') {
+      res.redirect('/cotizaciones');
+    } else {
+      res.redirect('/cotizaciones?mensaje=Su+solicitud+sera+revisada+en+breve');
+    }
   } catch (err) {
     await t.rollback();
     res.render('cotizaciones/nueva', {
@@ -103,7 +107,7 @@ router.get('/:id', async (req, res) => {
     return res.status(404).render('error', { usuario: req.usuario, mensaje: 'Cotizacion no encontrada' });
   }
 
-  res.render('cotizaciones/detalle', { usuario: req.usuario, cotizacion, productos, categorias, error: null });
+  res.render('cotizaciones/detalle', { usuario: req.usuario, cotizacion, productos, categorias, esAdmin: req.usuario.rol === 'admin', error: null });
 });
 
 router.post('/:id/agregar', async (req, res) => {
@@ -124,14 +128,14 @@ router.post('/:id/agregar', async (req, res) => {
 
   if (!producto) {
     return res.render('cotizaciones/detalle', {
-      usuario: req.usuario, cotizacion, productos, categorias,
+      usuario: req.usuario, cotizacion, productos, categorias, esAdmin: req.usuario.rol === 'admin',
       error: 'Producto no encontrado'
     });
   }
 
   if (producto.stock < parseInt(cantidad)) {
     return res.status(409).render('cotizaciones/detalle', {
-      usuario: req.usuario, cotizacion, productos, categorias,
+      usuario: req.usuario, cotizacion, productos, categorias, esAdmin: req.usuario.rol === 'admin',
       error: `Stock insuficiente. "${producto.nombre}" tiene ${producto.stock} unidades, solicitaste ${cantidad}.`
     });
   }
@@ -159,13 +163,17 @@ router.post('/:id/agregar', async (req, res) => {
   } catch (err) {
     await t.rollback();
     res.render('cotizaciones/detalle', {
-      usuario: req.usuario, cotizacion, productos, categorias,
+      usuario: req.usuario, cotizacion, productos, categorias, esAdmin: req.usuario.rol === 'admin',
       error: 'Error al agregar producto'
     });
   }
 });
 
 router.post('/:id/estado', async (req, res) => {
+  if (req.usuario.rol !== 'admin') {
+    return res.status(403).render('error', { usuario: req.usuario, mensaje: 'Solo el administrador puede aprobar o rechazar cotizaciones' });
+  }
+
   const { estado } = req.body;
   const cotizacion = await db.Cotizacion.findByPk(req.params.id);
 

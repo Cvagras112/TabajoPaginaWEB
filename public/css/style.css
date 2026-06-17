@@ -209,6 +209,18 @@ body {
   border: 1px solid #fed7d7;
 }
 
+.alert-success {
+  background-color: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.alert-info {
+  background-color: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
 /* Main */
 main.container {
   padding: 36px 24px;

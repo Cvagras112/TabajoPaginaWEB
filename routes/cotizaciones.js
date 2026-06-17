@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
       include: ['usuario'],
       order: [['created_at', 'DESC']]
     });
-    res.render('cotizaciones/index', { usuario: req.usuario, cotizaciones, mensaje: req.query.mensaje || null });
+    res.render('cotizaciones/index', { usuario: req.usuario, cotizaciones, esAdmin: req.usuario.rol === 'admin', mensaje: req.query.mensaje || null });
   } catch (err) {
     res.status(500).render('error', { usuario: req.usuario, mensaje: 'Error al cargar cotizaciones' });
   }
@@ -234,6 +234,26 @@ router.post('/:id/aceptar', async (req, res) => {
     await t.rollback();
     return res.status(500).render('error', { usuario: req.usuario, mensaje: 'Error al aceptar cotizacion' });
   }
+});
+
+router.post('/:id/eliminar', async (req, res) => {
+  if (req.usuario.rol !== 'admin') {
+    return res.status(403).render('error', { usuario: req.usuario, mensaje: 'Solo el administrador puede eliminar cotizaciones' });
+  }
+
+  const cotizacion = await db.Cotizacion.findByPk(req.params.id);
+
+  if (!cotizacion) {
+    return res.status(404).render('error', { usuario: req.usuario, mensaje: 'Cotizacion no encontrada' });
+  }
+
+  if (cotizacion.estado === 'pendiente') {
+    return res.status(422).render('error', { usuario: req.usuario, mensaje: 'No se pueden eliminar cotizaciones pendientes. Solo rechazadas o aceptadas.' });
+  }
+
+  await db.DetalleCotizacion.destroy({ where: { cotizacion_id: cotizacion.id } });
+  await cotizacion.destroy();
+  res.redirect('/cotizaciones');
 });
 
 module.exports = router;

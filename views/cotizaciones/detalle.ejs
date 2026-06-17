@@ -42,6 +42,12 @@
       <% } else if (cotizacion.estado === 'aceptada') { %>
         <div class="alert alert-success" style="margin-top:16px">🎉 Cotizacion aceptada. Stock descontado.</div>
       <% } %>
+
+      <% if (esAdmin && (cotizacion.estado === 'rechazada' || cotizacion.estado === 'aceptada')) { %>
+        <form action="/cotizaciones/<%= cotizacion.id %>/eliminar" method="POST" onsubmit="return confirm('Eliminar esta cotizacion?')" style="margin-top:12px">
+          <button type="submit" class="btn btn-primary btn-danger" style="width:auto">🗑 Eliminar cotizacion</button>
+        </form>
+      <% } %>
     </div>
 
     <h2 style="margin-bottom:16px">Productos</h2>

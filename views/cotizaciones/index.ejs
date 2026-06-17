@@ -38,6 +38,11 @@
                 <span class="badge badge-<%= c.estado %>"><%= c.estado %></span>
                 <strong style="color:#1e3a5f">$<%= parseFloat(c.total).toFixed(2) %></strong>
               </div>
+              <% if (typeof esAdmin !== 'undefined' && esAdmin && (c.estado === 'rechazada' || c.estado === 'aceptada')) { %>
+                <form action="/cotizaciones/<%= c.id %>/eliminar" method="POST" onsubmit="return confirm('Eliminar esta cotizacion?')" style="display:inline;margin-left:8px">
+                  <button type="submit" style="background:none;border:none;color:#ef4444;font-size:0.75em;cursor:pointer;padding:2px 6px">🗑</button>
+                </form>
+              <% } %>
             </div>
           </a>
         <% }) %>

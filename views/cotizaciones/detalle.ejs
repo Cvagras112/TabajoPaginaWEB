@@ -25,22 +25,15 @@
       <p><strong>Creado por:</strong> <%= cotizacion.usuario.nombre %></p>
       <p><strong>Total:</strong> <span style="font-size:1.3em;font-weight:bold;color:#1e3a5f">$<%= parseFloat(cotizacion.total).toFixed(2) %></span></p>
 
-      <% if (esAdmin && cotizacion.estado === 'pendiente') { %>
+      <% if (cotizacion.estado === 'pendiente') { %>
         <form action="/cotizaciones/<%= cotizacion.id %>/estado" method="POST" style="margin-top:16px;display:flex;gap:10px">
-          <button type="submit" name="estado" value="aprobada" class="btn btn-primary" style="width:auto;background:#22c55e">Aprobar</button>
-          <button type="submit" name="estado" value="rechazada" class="btn btn-primary" style="width:auto;background:#ef4444">Rechazar</button>
+          <button type="submit" name="estado" value="aceptada" class="btn btn-primary" style="width:auto;background:#22c55e">✔ Aceptar</button>
+          <button type="submit" name="estado" value="rechazada" class="btn btn-primary" style="width:auto;background:#ef4444">✕ Rechazar</button>
         </form>
-      <% } else if (!esAdmin && cotizacion.estado === 'pendiente') { %>
-        <div class="alert alert-info" style="margin-top:16px">⏳ Su solicitud sera revisada en breve por el administrador.</div>
-      <% } else if (cotizacion.estado === 'aprobada') { %>
-        <div class="alert alert-success" style="margin-top:16px">✅ Cotizacion aprobada por el administrador.</div>
-        <form action="/cotizaciones/<%= cotizacion.id %>/aceptar" method="POST" style="margin-top:12px">
-          <button type="submit" class="btn btn-primary" style="width:auto;background:#22c55e">✔ Aceptar cotizacion</button>
-        </form>
+      <% } else if (cotizacion.estado === 'aceptada') { %>
+        <div class="alert alert-success" style="margin-top:16px">✅ Cotizacion aceptada. Stock descontado.</div>
       <% } else if (cotizacion.estado === 'rechazada') { %>
         <div class="alert alert-error" style="margin-top:16px">❌ Esta cotizacion fue rechazada.</div>
-      <% } else if (cotizacion.estado === 'aceptada') { %>
-        <div class="alert alert-success" style="margin-top:16px">🎉 Cotizacion aceptada. Stock descontado.</div>
       <% } %>
 
       <% if (esAdmin && (cotizacion.estado === 'rechazada' || cotizacion.estado === 'aceptada')) { %>

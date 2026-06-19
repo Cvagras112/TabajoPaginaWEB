@@ -106,11 +106,7 @@ router.post('/', async (req, res) => {
     }
 
     await t.commit();
-    if (req.usuario.rol === 'admin') {
-      res.redirect('/cotizaciones');
-    } else {
-      res.redirect('/cotizaciones?mensaje=Su+solicitud+sera+revisada+en+breve');
-    }
+    res.redirect('/cotizaciones?mensaje=Cotizacion+creada.+Puedes+aceptarla+o+rechazarla+desde+el+detalle.');
   } catch (err) {
     await t.rollback();
     res.render('cotizaciones/nueva', {
@@ -199,10 +195,6 @@ router.post('/:id/agregar', async (req, res) => {
 });
 
 router.post('/:id/estado', async (req, res) => {
-  if (req.usuario.rol !== 'admin') {
-    return res.status(403).render('error', { usuario: req.usuario, mensaje: 'Solo el administrador puede aprobar o rechazar cotizaciones' });
-  }
-
   const { estado } = req.body;
   const cotizacion = await db.Cotizacion.findByPk(req.params.id);
 
@@ -210,59 +202,49 @@ router.post('/:id/estado', async (req, res) => {
     return res.status(404).render('error', { usuario: req.usuario, mensaje: 'Cotizacion no encontrada' });
   }
 
-  if (!['aprobada', 'rechazada'].includes(estado)) {
+  if (!['aceptada', 'rechazada'].includes(estado)) {
     return res.status(422).render('error', { usuario: req.usuario, mensaje: 'Estado no valido' });
   }
 
   if (cotizacion.estado !== 'pendiente') {
-    return res.status(422).render('error', { usuario: req.usuario, mensaje: 'Solo se puede aprobar o rechazar cotizaciones pendientes' });
+    return res.status(422).render('error', { usuario: req.usuario, mensaje: 'Solo se pueden aceptar o rechazar cotizaciones pendientes' });
   }
 
-  await cotizacion.update({ estado });
-  res.redirect(`/cotizaciones/${cotizacion.id}`);
-});
+  if (estado === 'aceptada') {
+    const detalles = await db.DetalleCotizacion.findAll({
+      where: { cotizacion_id: cotizacion.id },
+      include: ['producto']
+    });
 
-router.post('/:id/aceptar', async (req, res) => {
-  const cotizacion = await db.Cotizacion.findByPk(req.params.id);
+    const t = await db.sequelize.transaction();
 
-  if (!cotizacion) {
-    return res.status(404).render('error', { usuario: req.usuario, mensaje: 'Cotizacion no encontrada' });
-  }
+    try {
+      for (const detalle of detalles) {
+        const producto = detalle.producto;
+        const nuevoStock = producto.stock - detalle.cantidad;
 
-  if (cotizacion.estado !== 'aprobada') {
-    return res.status(422).render('error', { usuario: req.usuario, mensaje: 'Solo se pueden aceptar cotizaciones aprobadas' });
-  }
+        if (nuevoStock < 0) {
+          await t.rollback();
+          return res.status(409).render('error', {
+            usuario: req.usuario,
+            mensaje: `No se puede aceptar. Stock insuficiente de "${producto.nombre}" (disponible: ${producto.stock})`
+          });
+        }
 
-  const detalles = await db.DetalleCotizacion.findAll({
-    where: { cotizacion_id: cotizacion.id },
-    include: ['producto']
-  });
-
-  const t = await db.sequelize.transaction();
-
-  try {
-    for (const detalle of detalles) {
-      const producto = detalle.producto;
-      const nuevoStock = producto.stock - detalle.cantidad;
-
-      if (nuevoStock < 0) {
-        await t.rollback();
-        return res.status(409).render('error', {
-          usuario: req.usuario,
-          mensaje: `No se puede aceptar. Stock insuficiente de "${producto.nombre}" (disponible: ${producto.stock})`
-        });
+        await producto.update({ stock: nuevoStock }, { transaction: t });
       }
 
-      await producto.update({ stock: nuevoStock }, { transaction: t });
+      await cotizacion.update({ estado: 'aceptada' }, { transaction: t });
+      await t.commit();
+    } catch (err) {
+      await t.rollback();
+      return res.status(500).render('error', { usuario: req.usuario, mensaje: 'Error al aceptar cotizacion' });
     }
-
-    await cotizacion.update({ estado: 'aceptada' }, { transaction: t });
-    await t.commit();
-    res.redirect(`/cotizaciones/${cotizacion.id}`);
-  } catch (err) {
-    await t.rollback();
-    return res.status(500).render('error', { usuario: req.usuario, mensaje: 'Error al aceptar cotizacion' });
+  } else {
+    await cotizacion.update({ estado: 'rechazada' });
   }
+
+  res.redirect(`/cotizaciones/${cotizacion.id}`);
 });
 
 router.post('/:id/eliminar', async (req, res) => {

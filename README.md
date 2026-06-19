@@ -145,12 +145,12 @@ Tabla: `DetalleCotizacion`
 
 ---
 
-## rq-06: Flujo cotizacion (cliente crea -> admin revisa -> cliente acepta)
+## rq-06: Flujo cotizacion (cliente acepta/rechaza)
 
-- **Borrador (pendiente):** NO descuenta stock
-- **Admin aprueba:** NO descuenta stock (solo cambia estado)
-- **Cliente acepta:** SI descuenta stock y bloquea la cotizacion
-- Si al aceptar el stock ya no alcanza, devuelve **HTTP 409**
+- **Cliente crea** cotización → `pendiente` (NO descuenta stock)
+- **Cliente acepta** → `aceptada` (SI descuenta stock)
+- **Cliente rechaza** → `rechazada`
+- **Admin** puede ver todas las cotizaciones y sus estados, y eliminar las aceptadas/rechazadas
 
 ---
 

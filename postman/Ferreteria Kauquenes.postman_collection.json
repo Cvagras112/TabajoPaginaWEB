@@ -1,0 +1,349 @@
+{
+  "info": {
+    "name": "Ferreteria Kauquenes",
+    "description": "API completa de Ferreteria Kauquenes\n\nFlujo:\n1. Login (POST) -> guarda cookie JWT\n2. Usar demas endpoints\n\nCredenciales:\n- admin@ferreteria.com / admin123\n- cliente@ferreteria.com / cliente123",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [{ "key": "base_url", "value": "http://localhost:3000" }],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "email", "value": "admin@ferreteria.com", "type": "text" },
+                { "key": "password", "value": "admin123", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{base_url}}/auth/login", "host": ["{{base_url}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/auth/logout", "host": ["{{base_url}}"], "path": ["auth", "logout"] }
+          }
+        },
+        {
+          "name": "Restablecer contrasena",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [{ "key": "email", "value": "cliente@ferreteria.com", "type": "text" }]
+            },
+            "url": { "raw": "{{base_url}}/auth/restablecer", "host": ["{{base_url}}"], "path": ["auth", "restablecer"] }
+          }
+        },
+        {
+          "name": "Cambiar contrasena",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "password_actual", "value": "admin123", "type": "text" },
+                { "key": "password_nueva", "value": "nueva123", "type": "text" },
+                { "key": "password_confirmar", "value": "nueva123", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{base_url}}/auth/cambiar-password", "host": ["{{base_url}}"], "path": ["auth", "cambiar-password"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Ver dashboard",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/", "host": ["{{base_url}}"], "path": [""] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Productos",
+      "item": [
+        {
+          "name": "Listar productos",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/productos", "host": ["{{base_url}}"], "path": ["productos"] }
+          }
+        },
+        {
+          "name": "Filtrar por nombre",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/productos?buscar=martillo", "host": ["{{base_url}}"], "path": ["productos"], "query": [{ "key": "buscar", "value": "martillo" }] }
+          }
+        },
+        {
+          "name": "Filtrar por categoria",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/productos?categoria_id=1", "host": ["{{base_url}}"], "path": ["productos"], "query": [{ "key": "categoria_id", "value": "1" }] }
+          }
+        },
+        {
+          "name": "Stock bajo",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/productos?stock_bajo=1", "host": ["{{base_url}}"], "path": ["productos"], "query": [{ "key": "stock_bajo", "value": "1" }] }
+          }
+        },
+        {
+          "name": "Ver producto",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/productos/11", "host": ["{{base_url}}"], "path": ["productos", "11"] }
+          }
+        },
+        {
+          "name": "Crear producto (admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "nombre", "value": "Producto Nuevo", "type": "text" },
+                { "key": "categoria_id", "value": "1", "type": "text" },
+                { "key": "tipo", "value": "pulgada 1/2", "type": "text" },
+                { "key": "gtin", "value": "7809999999999", "type": "text" },
+                { "key": "precio", "value": "9990", "type": "text" },
+                { "key": "stock", "value": "20", "type": "text" },
+                { "key": "disponibilidad", "value": "1", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{base_url}}/productos", "host": ["{{base_url}}"], "path": ["productos"] }
+          }
+        },
+        {
+          "name": "Editar producto (admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "nombre", "value": "Producto Editado", "type": "text" },
+                { "key": "categoria_id", "value": "2", "type": "text" },
+                { "key": "tipo", "value": "mm 10", "type": "text" },
+                { "key": "gtin", "value": "", "type": "text" },
+                { "key": "precio", "value": "15000", "type": "text" },
+                { "key": "stock", "value": "30", "type": "text" },
+                { "key": "disponibilidad", "value": "1", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{base_url}}/productos/11", "host": ["{{base_url}}"], "path": ["productos", "11"] }
+          }
+        },
+        {
+          "name": "Eliminar producto (admin)",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{base_url}}/productos/11/eliminar", "host": ["{{base_url}}"], "path": ["productos", "11", "eliminar"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Categorias",
+      "item": [
+        {
+          "name": "Listar categorias",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/categorias", "host": ["{{base_url}}"], "path": ["categorias"] }
+          }
+        },
+        {
+          "name": "Crear categoria (admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "nombre", "value": "Nueva Categoria", "type": "text" },
+                { "key": "descripcion", "value": "Descripcion de prueba", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{base_url}}/categorias", "host": ["{{base_url}}"], "path": ["categorias"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cotizaciones",
+      "item": [
+        {
+          "name": "Listar cotizaciones",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/cotizaciones", "host": ["{{base_url}}"], "path": ["cotizaciones"] }
+          }
+        },
+        {
+          "name": "Ver detalle cotizacion",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/cotizaciones/17", "host": ["{{base_url}}"], "path": ["cotizaciones", "17"] }
+          }
+        },
+        {
+          "name": "Crear cotizacion (1 producto)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "cliente_nombre", "value": "Juan Perez", "type": "text" },
+                { "key": "producto_id", "value": "11", "type": "text" },
+                { "key": "cantidad", "value": "2", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{base_url}}/cotizaciones", "host": ["{{base_url}}"], "path": ["cotizaciones"] }
+          }
+        },
+        {
+          "name": "Crear cotizacion multi-linea",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "cliente_nombre", "value": "Multi Linea", "type": "text" },
+                { "key": "producto_id", "value": "11", "type": "text" },
+                { "key": "cantidad", "value": "1", "type": "text" },
+                { "key": "producto_id", "value": "12", "type": "text" },
+                { "key": "cantidad", "value": "2", "type": "text" },
+                { "key": "producto_id", "value": "13", "type": "text" },
+                { "key": "cantidad", "value": "1", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{base_url}}/cotizaciones", "host": ["{{base_url}}"], "path": ["cotizaciones"] }
+          }
+        },
+        {
+          "name": "Aceptar cotizacion",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [{ "key": "estado", "value": "aceptada", "type": "text" }]
+            },
+            "url": { "raw": "{{base_url}}/cotizaciones/1/estado", "host": ["{{base_url}}"], "path": ["cotizaciones", "1", "estado"] }
+          }
+        },
+        {
+          "name": "Rechazar cotizacion",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [{ "key": "estado", "value": "rechazada", "type": "text" }]
+            },
+            "url": { "raw": "{{base_url}}/cotizaciones/1/estado", "host": ["{{base_url}}"], "path": ["cotizaciones", "1", "estado"] }
+          }
+        },
+        {
+          "name": "Agregar producto a cotizacion",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "producto_id", "value": "13", "type": "text" },
+                { "key": "cantidad", "value": "3", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{base_url}}/cotizaciones/1/agregar", "host": ["{{base_url}}"], "path": ["cotizaciones", "1", "agregar"] }
+          }
+        },
+        {
+          "name": "Eliminar cotizacion (admin, solo aceptada/rechazada)",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{base_url}}/cotizaciones/1/eliminar", "host": ["{{base_url}}"], "path": ["cotizaciones", "1", "eliminar"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Inventario",
+      "item": [
+        {
+          "name": "Ver inventario",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/inventario", "host": ["{{base_url}}"], "path": ["inventario"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Alertas",
+      "item": [
+        {
+          "name": "Ver alertas stock",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/alertas", "host": ["{{base_url}}"], "path": ["alertas"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tests",
+      "item": [
+        {
+          "name": "TEST: Exceder stock (espera 409)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "cliente_nombre", "value": "Test Stock", "type": "text" },
+                { "key": "producto_id", "value": "11", "type": "text" },
+                { "key": "cantidad", "value": "999", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{base_url}}/cotizaciones", "host": ["{{base_url}}"], "path": ["cotizaciones"] }
+          }
+        },
+        {
+          "name": "TEST: Cliente rechaza (espera 302)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [{ "key": "estado", "value": "rechazada", "type": "text" }]
+            },
+            "url": { "raw": "{{base_url}}/cotizaciones/10/estado", "host": ["{{base_url}}"], "path": ["cotizaciones", "10", "estado"] }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -145,11 +145,53 @@ Tabla: `DetalleCotizacion`
 
 ---
 
-## rq-06: Cotizacion confirmada descuenta stock
+## rq-06: Flujo cotizacion (cliente crea -> admin revisa -> cliente acepta)
 
-- **Borrador (pendiente):** al crear cotizacion NO se descuenta stock
-- **Confirmada (aprobada):** al aprobar, SI se descuenta stock de cada producto en transaccion
-- Si al aprobar el stock ya no alcanza (otro proceso lo consumio), devuelve **HTTP 409**
+- **Borrador (pendiente):** NO descuenta stock
+- **Admin aprueba:** NO descuenta stock (solo cambia estado)
+- **Cliente acepta:** SI descuenta stock y bloquea la cotizacion
+- Si al aceptar el stock ya no alcanza, devuelve **HTTP 409**
+
+---
+
+## rq-03: CRUD Productos
+
+CRUD completo con filtros, busqueda y restriccion admin.
+
+| Metodo | Ruta | Acceso |
+| ------ | ---- | ------ |
+| GET | `/productos` | Todos |
+| GET/POST | `/productos/nuevo` | Admin |
+| GET | `/productos/:id` | Todos |
+| GET/POST | `/productos/:id/editar` | Admin |
+| POST | `/productos/:id/eliminar` | Admin |
+
+---
+
+## rq-07: Filtros y busqueda
+
+- Busqueda por nombre de producto
+- Filtro por categoria (dropdown)
+- Filtro stock bajo (checkbox, stock <= 10)
+- Filtros combinables
+
+---
+
+## rq-08: Panel de inventario
+
+`/inventario` con metricas en tiempo real: total productos, disponibles, stock bajo, sin stock, valor total del inventario. Indicadores visuales por nivel de stock.
+
+---
+
+## rq-09: Cotizacion multi-linea
+
+Formulario con lineas dinamicas: agregar/quitar productos, subtotales en vivo, total automatico, filtro por categoria por linea.
+
+---
+
+## rq-10: Alertas de stock bajo
+
+`/alertas` con niveles: 🔴 Agotado (0), 🟠 Critico (<=5), 🔵 Bajo (<=10). Sugerencia de reorden para cada producto.
 
 ---
 
@@ -208,11 +250,17 @@ Abrir http://localhost:3000/auth/login
 | --------- | ----------- |
 | rq-01     | Completado  |
 | rq-02     | Completado  |
+| rq-03     | Completado  |
 | rq-04     | Completado  |
 | rq-05     | Completado  |
 | rq-06     | Completado  |
+| rq-07     | Completado  |
+| rq-08     | Completado  |
+| rq-09     | Completado  |
+| rq-10     | Completado  |
 | GEN-02    | Completado  |
 | GEN-03    | Completado  |
+| GEN-04    | Completado  |
 | GEN-05    | Completado  |
 
 ---

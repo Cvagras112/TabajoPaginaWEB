@@ -13,11 +13,23 @@
     <h1>Bienvenido, <%= usuario.nombre %></h1>
 
     <div class="cards">
-      <a href="/productos" class="card dashboard-card">
-        <div class="card-icon">📦</div>
-        <h3>Productos</h3>
+      <a href="/inventario" class="card dashboard-card">
+        <div class="card-icon">📊</div>
+        <h3>Inventario</h3>
         <p class="card-number"><%= totalProductos %></p>
-        <small>en inventario</small>
+        <small>productos en sistema</small>
+      </a>
+      <a href="/productos?stock_bajo=1" class="card dashboard-card">
+        <div class="card-icon">⚠️</div>
+        <h3>Stock Bajo</h3>
+        <p class="card-number"><%= stockBajo %></p>
+        <small>por debajo de 10</small>
+      </a>
+      <a href="/cotizaciones" class="card dashboard-card">
+        <div class="card-icon">📋</div>
+        <h3>Cotizaciones</h3>
+        <p class="card-number"><%= pendientes %></p>
+        <small>pendientes</small>
       </a>
       <a href="/categorias" class="card dashboard-card">
         <div class="card-icon">📂</div>

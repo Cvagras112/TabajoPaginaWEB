@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alertas Stock - Ferreteria Kauquenes</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .alerta-card { border-left: 5px solid #ccc; padding: 16px 20px; display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px; border-radius:0 8px 8px 0; background:white; box-shadow:0 1px 4px rgba(0,0,0,0.05) }
+    .alerta-agotado { border-left-color: #ef4444; background:#fff5f5 }
+    .alerta-critico { border-left-color: #f59e0b; background:#fffbeb }
+    .alerta-bajo { border-left-color: #3b82f6; background:#eff6ff }
+    .alerta-icono { font-size:1.5rem; width:40px }
+  </style>
+</head>
+<body>
+  <%- include('../partials/header') %>
+
+  <main class="container">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <h1 style="margin:0">Alertas de Stock</h1>
+      <% if (productos.length > 0) { %>
+        <span class="badge" style="background:#fee2e2;color:#991b1b;font-size:0.9em;padding:6px 14px"><%= productos.length %> alertas</span>
+      <% } %>
+    </div>
+
+    <div class="cards" style="grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));gap:16px;margin-bottom:28px">
+      <div class="card" style="background:linear-gradient(135deg,#dc2626,#ef4444);color:white;padding:20px">
+        <small style="color:rgba(255,255,255,0.75)">Agotados</small>
+        <p style="font-size:2.2em;font-weight:800;margin:4px 0 0"><%= metricas.agotados %></p>
+      </div>
+      <div class="card" style="background:linear-gradient(135deg,#d97706,#f59e0b);color:white;padding:20px">
+        <small style="color:rgba(255,255,255,0.75)">Criticos (&le;5)</small>
+        <p style="font-size:2.2em;font-weight:800;margin:4px 0 0"><%= metricas.criticos %></p>
+      </div>
+      <div class="card" style="background:linear-gradient(135deg,#2563eb,#3b82f6);color:white;padding:20px">
+        <small style="color:rgba(255,255,255,0.75)">Bajos (&le;10)</small>
+        <p style="font-size:2.2em;font-weight:800;margin:4px 0 0"><%= metricas.bajos %></p>
+      </div>
+    </div>
+
+    <% if (productos.length === 0) { %>
+      <div class="card" style="text-align:center;padding:50px">
+        <p style="font-size:3rem">✅</p>
+        <h3 style="color:#166534;margin:10px 0">Todo en orden</h3>
+        <p style="color:#999">No hay productos con stock bajo. El inventario esta saludable.</p>
+      </div>
+    <% } else { %>
+      <% productos.forEach(p => { 
+        var clase = p.stock === 0 ? 'alerta-agotado' : (p.stock <= 5 ? 'alerta-critico' : 'alerta-bajo');
+        var icono = p.stock === 0 ? '🔴' : (p.stock <= 5 ? '🟠' : '🔵');
+        var nivel = p.stock === 0 ? 'AGOTADO' : (p.stock <= 5 ? 'CRITICO' : 'BAJO');
+        var sugerido = Math.max(15 - p.stock, 0);
+      %>
+        <div class="alerta-card <%= clase %>">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span class="alerta-icono"><%= icono %></span>
+            <div>
+              <a href="/productos/<%= p.id %>" style="font-weight:600;color:#1e3a5f;text-decoration:none"><%= p.nombre %></a>
+              <div style="font-size:0.8em;color:#636e72;margin-top:2px">
+                <%= p.categoria ? p.categoria.nombre : 'Sin categoria' %> | <%= p.tipo || '' %>
+              </div>
+            </div>
+          </div>
+          <div style="text-align:right;min-width:140px">
+            <div style="font-size:1.3em;font-weight:800;color:<%= p.stock === 0 ? '#dc2626' : (p.stock <= 5 ? '#d97706' : '#2563eb') %>"><%= p.stock %> unids</div>
+            <div style="font-size:0.75em;color:#999;margin-top:2px">
+              <% if (p.stock === 0) { %>
+                Urgente reordenar
+              <% } else { %>
+                Sugerido: +<%= sugerido %> unids
+              <% } %>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    <% } %>
+  </main>
+</body>
+</html>

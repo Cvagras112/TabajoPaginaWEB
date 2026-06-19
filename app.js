@@ -22,6 +22,7 @@ app.use('/productos', require('./routes/productos'));
 app.use('/categorias', require('./routes/categorias'));
 app.use('/cotizaciones', require('./routes/cotizaciones'));
 app.use('/inventario', require('./routes/inventario'));
+app.use('/alertas', require('./routes/alertas'));
 app.use('/', require('./routes/index'));
 
 app.use((err, req, res, next) => {

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventario - Ferreteria Kauquenes</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+
+  <main class="container">
+    <h1 style="margin-bottom:20px">Inventario</h1>
+
+    <div class="cards" style="grid-template-columns:repeat(auto-fit, minmax(170px, 1fr));gap:16px;margin-bottom:28px">
+      <div class="card" style="background:linear-gradient(135deg,#1a56db,#2563eb);color:white;padding:20px">
+        <small style="color:rgba(255,255,255,0.75)">Total productos</small>
+        <p style="font-size:2.2em;font-weight:800;margin:4px 0 0"><%= metricas.total %></p>
+      </div>
+      <div class="card" style="background:linear-gradient(135deg,#059669,#10b981);color:white;padding:20px">
+        <small style="color:rgba(255,255,255,0.75)">Disponibles</small>
+        <p style="font-size:2.2em;font-weight:800;margin:4px 0 0"><%= metricas.disponibles %></p>
+      </div>
+      <div class="card" style="background:linear-gradient(135deg,#d97706,#f59e0b);color:white;padding:20px">
+        <small style="color:rgba(255,255,255,0.75)">Stock bajo</small>
+        <p style="font-size:2.2em;font-weight:800;margin:4px 0 0"><%= metricas.stockBajo %></p>
+      </div>
+      <div class="card" style="background:linear-gradient(135deg,#dc2626,#ef4444);color:white;padding:20px">
+        <small style="color:rgba(255,255,255,0.75)">Sin stock</small>
+        <p style="font-size:2.2em;font-weight:800;margin:4px 0 0"><%= metricas.sinStock %></p>
+      </div>
+      <div class="card" style="background:linear-gradient(135deg,#6366f1,#818cf8);color:white;padding:20px">
+        <small style="color:rgba(255,255,255,0.75)">Valor total</small>
+        <p style="font-size:1.4em;font-weight:800;margin:4px 0 0">$<%= metricas.valorTotal.toLocaleString('es-CL') %></p>
+      </div>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden">
+      <table>
+        <thead>
+          <tr style="background:#f8f9fa;text-align:left">
+            <th style="padding:12px 16px;font-size:0.85em">Producto</th>
+            <th style="padding:12px 16px;font-size:0.85em">Categoria</th>
+            <th style="padding:12px 16px;font-size:0.85em">Precio</th>
+            <th style="padding:12px 16px;font-size:0.85em">Stock</th>
+            <th style="padding:12px 16px;font-size:0.85em">Nivel</th>
+            <th style="padding:12px 16px;font-size:0.85em">Disp.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% productos.forEach(p => { %>
+            <tr style="border-top:1px solid #edf2f7">
+              <td style="padding:12px 16px"><a href="/productos/<%= p.id %>" style="color:#1a56db;text-decoration:none;font-weight:500"><%= p.nombre %></a></td>
+              <td style="padding:12px 16px;font-size:0.9em"><%= p.categoria ? p.categoria.nombre : '-' %></td>
+              <td style="padding:12px 16px;font-weight:600">$<%= parseFloat(p.precio).toFixed(2) %></td>
+              <td style="padding:12px 16px;font-weight:600"><%= p.stock %></td>
+              <td style="padding:12px 16px">
+                <% if (p.stock === 0) { %>
+                  <span class="badge badge-rechazada">Agotado</span>
+                <% } else if (p.stock <= 5) { %>
+                  <span class="badge" style="background:#fef3c7;color:#92400e">Critico</span>
+                <% } else if (p.stock <= 10) { %>
+                  <span class="badge" style="background:#ffedd5;color:#c2410c">Bajo</span>
+                <% } else { %>
+                  <span class="badge badge-aprobada">Normal</span>
+                <% } %>
+              </td>
+              <td style="padding:12px 16px"><span class="badge <%= p.disponibilidad ? 'badge-aprobada' : 'badge-rechazada' %>"><%= p.disponibilidad ? 'Si' : 'No' %></span></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</body>
+</html>

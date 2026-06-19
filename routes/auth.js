@@ -44,6 +44,38 @@ router.get('/logout', (req, res) => {
   res.redirect('/auth/login');
 });
 
+router.get('/restablecer', (req, res) => {
+  res.render('auth/restablecer', { error: null, exito: null });
+});
+
+router.post('/restablecer', async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.render('auth/restablecer', { exito: null, error: 'Ingresa tu email' });
+  }
+
+  try {
+    const usuario = await db.Usuario.findOne({ where: { email, activo: true } });
+
+    if (!usuario) {
+      return res.render('auth/restablecer', { exito: null, error: 'No se encontro un usuario con ese email' });
+    }
+
+    const nuevaPassword = Math.random().toString(36).slice(-8);
+    const nuevoHash = await bcrypt.hash(nuevaPassword, 10);
+    await usuario.update({ password: nuevoHash });
+
+    res.render('auth/restablecer', {
+      error: null,
+      exito: `Contrasena restablecida. Tu nueva contrasena es: <strong>${nuevaPassword}</strong>`,
+      nuevaPassword
+    });
+  } catch (err) {
+    res.render('auth/restablecer', { exito: null, error: 'Error al restablecer la contrasena' });
+  }
+});
+
 router.get('/cambiar-password', isAuthenticated, (req, res) => {
   res.render('auth/cambiar-password', { usuario: req.usuario, error: null, exito: null });
 });

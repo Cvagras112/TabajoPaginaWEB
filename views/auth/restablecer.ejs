@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restablecer Contrasena - Ferreteria Kauquenes</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-box">
+      <h1><span class="icono">🔩</span>Ferreteria Kauquenes</h1>
+      <h2>Restablecer Contrasena</h2>
+
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-error"><%= error %></div>
+      <% } %>
+
+      <% if (typeof exito !== 'undefined' && exito) { %>
+        <div class="alert alert-success"><%- exito %></div>
+        <a href="/auth/login" class="btn btn-primary" style="margin-top:12px;display:block;text-align:center;width:100%">Ir al inicio de sesion</a>
+      <% } else { %>
+        <form action="/auth/restablecer" method="POST">
+          <p style="color:#636e72;font-size:0.85em;margin-bottom:18px">Ingresa tu email y recibiras una nueva contrasena.</p>
+          <div class="form-group">
+            <label for="email">Email registrado</label>
+            <input type="email" id="email" name="email" placeholder="admin@ferreteria.com" required autofocus>
+          </div>
+          <button type="submit" class="btn btn-primary">Restablecer</button>
+        </form>
+      <% } %>
+
+      <p style="text-align:center;margin-top:16px;font-size:0.85em">
+        <a href="/auth/login" style="color:#1a56db;text-decoration:none">&larr; Volver al inicio de sesion</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>

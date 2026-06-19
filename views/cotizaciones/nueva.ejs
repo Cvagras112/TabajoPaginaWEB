@@ -9,7 +9,7 @@
 <body>
   <%- include('../partials/header') %>
 
-  <main class="container" style="max-width:600px">
+  <main class="container" style="max-width:700px">
     <a href="/cotizaciones" style="color:#1a56db;text-decoration:none;font-size:0.9em">&larr; Volver</a>
     <h1 style="margin-top:8px">Nueva Cotizacion</h1>
 
@@ -18,54 +18,120 @@
     <% } %>
 
     <div class="card">
-      <form action="/cotizaciones" method="POST">
+      <form action="/cotizaciones" method="POST" id="formCotizacion">
         <div class="form-group">
           <label for="cliente_nombre">Nombre del cliente</label>
           <input type="text" id="cliente_nombre" name="cliente_nombre" required autofocus>
         </div>
 
-        <div class="form-group">
-          <label for="filtro_categoria">Filtrar por categoria</label>
-          <select id="filtro_categoria" style="width:100%;padding:12px;border:2px solid #dfe6e9;border-radius:8px;font-size:0.95em" onchange="filtrarProductos()">
-            <option value="">Todas las categorias</option>
-            <% categorias.forEach(c => { %>
-              <option value="<%= c.id %>"><%= c.nombre %></option>
-            <% }) %>
-          </select>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <label style="font-weight:600;font-size:0.9em">Productos</label>
+          <button type="button" class="btn btn-primary" style="width:auto;padding:6px 14px;font-size:0.8em" onclick="agregarLinea()">+ Agregar</button>
         </div>
 
-        <div class="form-group">
-          <label for="producto_id">Producto</label>
-          <select id="producto_id" name="producto_id" required style="width:100%;padding:12px;border:2px solid #dfe6e9;border-radius:8px;font-size:0.95em">
-            <option value="">Selecciona un producto</option>
-            <% productos.forEach(p => { %>
-              <option value="<%= p.id %>" data-categoria="<%= p.categoria_id || '' %>"><%= p.nombre %> - $<%= parseFloat(p.precio).toFixed(2) %> (stock: <%= p.stock %>)</option>
-            <% }) %>
-          </select>
+        <div id="lineas-container">
+          <div class="linea-producto" style="display:flex;gap:8px;margin-bottom:10px;align-items:end">
+            <div style="flex:1">
+              <label style="display:block;font-size:0.75em;font-weight:600;color:#636e72;margin-bottom:2px">Filtrar categoria</label>
+              <select class="filtro-cat" onchange="filtrarEnLinea(this)" style="width:100%;padding:8px;border:2px solid #dfe6e9;border-radius:6px;font-size:0.85em">
+                <option value="">Todas</option>
+                <% categorias.forEach(c => { %>
+                  <option value="<%= c.id %>"><%= c.nombre %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div style="flex:2">
+              <label style="display:block;font-size:0.75em;font-weight:600;color:#636e72;margin-bottom:2px">Producto</label>
+              <select name="producto_id" required class="sel-producto" style="width:100%;padding:8px;border:2px solid #dfe6e9;border-radius:6px;font-size:0.85em">
+                <option value="">Selecciona</option>
+                <% productos.forEach(p => { %>
+                  <option value="<%= p.id %>" data-categoria="<%= p.categoria_id || '' %>" data-precio="<%= p.precio %>" data-stock="<%= p.stock %>"><%= p.nombre %> ($<%= parseFloat(p.precio).toFixed(2) %>)</option>
+                <% }) %>
+              </select>
+            </div>
+            <div style="width:80px">
+              <label style="display:block;font-size:0.75em;font-weight:600;color:#636e72;margin-bottom:2px">Cant.</label>
+              <input type="number" name="cantidad" min="1" value="1" required style="width:100%;padding:8px;border:2px solid #dfe6e9;border-radius:6px;font-size:0.85em">
+            </div>
+            <div style="width:70px">
+              <label style="display:block;font-size:0.75em;font-weight:600;color:#636e72;margin-bottom:2px">Subtotal</label>
+              <span class="subtotal-linea" style="display:block;padding:8px 0;font-weight:600;color:#1e3a5f;font-size:0.85em">$0</span>
+            </div>
+            <button type="button" class="btn-remove" onclick="quitarLinea(this)" style="background:none;border:none;color:#ef4444;font-size:1.2em;cursor:pointer;padding:8px 4px" title="Quitar">✕</button>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label for="cantidad">Cantidad</label>
-          <input type="number" id="cantidad" name="cantidad" min="1" value="1" required>
+        <div id="total-container" style="border-top:2px solid #dfe6e9;padding-top:16px;margin-top:16px;text-align:right">
+          <span style="font-size:0.9em;color:#636e72">Total: </span>
+          <span id="total-general" style="font-size:1.5em;font-weight:800;color:#1e3a5f">$0</span>
         </div>
 
-        <button type="submit" class="btn btn-primary">Crear cotizacion</button>
+        <button type="submit" class="btn btn-primary" style="margin-top:16px">Crear cotizacion</button>
       </form>
     </div>
   </main>
 
   <script>
-    function filtrarProductos() {
-      var catId = document.getElementById('filtro_categoria').value;
-      var select = document.getElementById('producto_id');
-      var options = select.options;
-      for (var i = 0; i < options.length; i++) {
-        var opt = options[i];
-        if (!opt.value) { opt.style.display = ''; continue; }
-        var cat = opt.getAttribute('data-categoria');
-        opt.style.display = (!catId || cat === catId) ? '' : 'none';
+    function actualizarSubtotal(fila) {
+      var sel = fila.querySelector('.sel-producto');
+      var cant = fila.querySelector('input[name="cantidad"]');
+      var subtotalSpan = fila.querySelector('.subtotal-linea');
+      var precio = sel.options[sel.selectedIndex].getAttribute('data-precio') || 0;
+      var cantidad = parseInt(cant.value) || 0;
+      var subtotal = precio * cantidad;
+      subtotalSpan.textContent = '$' + subtotal.toLocaleString('es-CL', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+      actualizarTotal();
+    }
+
+    function actualizarTotal() {
+      var total = 0;
+      document.querySelectorAll('.linea-producto').forEach(function(fila) {
+        var sel = fila.querySelector('.sel-producto');
+        var cant = fila.querySelector('input[name="cantidad"]');
+        var precio = sel.options[sel.selectedIndex].getAttribute('data-precio') || 0;
+        var cantidad = parseInt(cant.value) || 0;
+        total += precio * cantidad;
+      });
+      document.getElementById('total-general').textContent = '$' + total.toLocaleString('es-CL', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+    }
+
+    document.addEventListener('change', function(e) {
+      if (e.target.classList.contains('sel-producto') || e.target.name === 'cantidad') {
+        actualizarSubtotal(e.target.closest('.linea-producto'));
       }
-      select.value = '';
+    });
+
+    function filtrarEnLinea(filtroSelect) {
+      var catId = filtroSelect.value;
+      var fila = filtroSelect.closest('.linea-producto');
+      var sel = fila.querySelector('.sel-producto');
+      var options = sel.options;
+      for (var i = 0; i < options.length; i++) {
+        if (!options[i].value) { options[i].style.display = ''; continue; }
+        var cat = options[i].getAttribute('data-categoria');
+        options[i].style.display = (!catId || cat === catId) ? '' : 'none';
+      }
+      sel.value = '';
+      actualizarSubtotal(fila);
+    }
+
+    function agregarLinea() {
+      var container = document.getElementById('lineas-container');
+      var template = container.querySelector('.linea-producto');
+      var nueva = template.cloneNode(true);
+      nueva.querySelector('.sel-producto').value = '';
+      nueva.querySelector('input[name="cantidad"]').value = '1';
+      nueva.querySelector('.subtotal-linea').textContent = '$0';
+      nueva.querySelector('.filtro-cat').value = '';
+      container.appendChild(nueva);
+      actualizarTotal();
+    }
+
+    function quitarLinea(btn) {
+      var lineas = document.querySelectorAll('.linea-producto');
+      if (lineas.length <= 1) return;
+      btn.closest('.linea-producto').remove();
+      actualizarTotal();
     }
   </script>
 </body>

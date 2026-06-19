@@ -26,55 +26,84 @@ router.get('/nueva', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const { cliente_nombre, producto_id, cantidad } = req.body;
+  const { cliente_nombre } = req.body;
+  let { producto_id, cantidad } = req.body;
+
   const [productos, categorias] = await Promise.all([
     db.Producto.findAll({ order: [['nombre', 'ASC']] }),
     db.Categoria.findAll({ order: [['nombre', 'ASC']] })
   ]);
 
-  if (!cliente_nombre || !producto_id || !cantidad || cantidad < 1) {
+  if (!producto_id) producto_id = [];
+  if (!cantidad) cantidad = [];
+  if (!Array.isArray(producto_id)) producto_id = [producto_id];
+  if (!Array.isArray(cantidad)) cantidad = [cantidad];
+
+  if (!cliente_nombre) {
     return res.render('cotizaciones/nueva', {
       usuario: req.usuario, productos, categorias,
-      error: 'Todos los campos son obligatorios'
+      error: 'El nombre del cliente es obligatorio'
     });
   }
 
-  const producto = await db.Producto.findByPk(producto_id);
-
-  if (!producto) {
+  if (producto_id.length === 0 || producto_id.some((id, i) => !id || !cantidad[i] || parseInt(cantidad[i]) < 1)) {
     return res.render('cotizaciones/nueva', {
       usuario: req.usuario, productos, categorias,
-      error: 'Producto no encontrado'
+      error: 'Agrega al menos un producto con cantidad valida'
     });
   }
 
-  if (producto.stock < parseInt(cantidad)) {
-    return res.status(409).render('cotizaciones/nueva', {
-      usuario: req.usuario, productos, categorias,
-      error: `Stock insuficiente. "${producto.nombre}" tiene ${producto.stock} unidades disponibles, solicitaste ${cantidad}.`
-    });
+  const lineas = producto_id.map((id, i) => ({
+    producto_id: parseInt(id),
+    cantidad: parseInt(cantidad[i]) || 0
+  }));
+
+  for (const linea of lineas) {
+    const prod = await db.Producto.findByPk(linea.producto_id);
+    if (!prod) {
+      return res.render('cotizaciones/nueva', {
+        usuario: req.usuario, productos, categorias,
+        error: 'Producto no encontrado'
+      });
+    }
+    if (prod.stock < linea.cantidad) {
+      return res.status(409).render('cotizaciones/nueva', {
+        usuario: req.usuario, productos, categorias,
+        error: `Stock insuficiente. "${prod.nombre}" tiene ${prod.stock} unidades, solicitaste ${linea.cantidad}.`
+      });
+    }
   }
 
   const t = await db.sequelize.transaction();
 
   try {
-    const precio = parseFloat(producto.precio);
-    const cant = parseInt(cantidad);
-    const subtotal = precio * cant;
+    let total = 0;
+    const productosDetalle = [];
+
+    for (const linea of lineas) {
+      const prod = await db.Producto.findByPk(linea.producto_id);
+      const subtotal = parseFloat(prod.precio) * linea.cantidad;
+      total += subtotal;
+      productosDetalle.push({
+        producto_id: linea.producto_id,
+        cantidad: linea.cantidad,
+        precio_unitario: parseFloat(prod.precio),
+        subtotal
+      });
+    }
 
     const cotizacion = await db.Cotizacion.create({
       cliente_nombre,
-      total: subtotal,
+      total,
       usuario_id: req.usuario.id
     }, { transaction: t });
 
-    await db.DetalleCotizacion.create({
-      cotizacion_id: cotizacion.id,
-      producto_id,
-      cantidad: cant,
-      precio_unitario: precio,
-      subtotal
-    }, { transaction: t });
+    for (const det of productosDetalle) {
+      await db.DetalleCotizacion.create({
+        cotizacion_id: cotizacion.id,
+        ...det
+      }, { transaction: t });
+    }
 
     await t.commit();
     if (req.usuario.rol === 'admin') {
